@@ -1,0 +1,18 @@
+{
+  "name": "smv-operation-master",
+  "version": "1.0.0",
+  "description": "SMV & Operation Master",
+  "author": "SMV",
+  "main": "main.js",
+  "scripts": { "start": "electron .", "dist": "electron-builder --win" },
+  "dependencies": { "exceljs": "^4.4.0", "xlsx": "0.18.5" },
+  "devDependencies": { "electron": "^33.2.0", "electron-builder": "^25.1.8" },
+  "build": {
+    "appId": "com.smv.operationmaster",
+    "productName": "SMV Operation Master",
+    "files": ["main.js", "preload.js", "store.js", "index.html", "manifest.webmanifest", "icon-192.png", "icon-512.png", "vendor/**/*", "build/icon.png"],
+    "win": { "icon": "build/icon.png", "target": [{ "target": "portable", "arch": ["x64"] }, { "target": "nsis", "arch": ["x64"] }] },
+    "portable": { "artifactName": "SMV-Operation-Master.exe" },
+    "nsis": { "oneClick": true, "perMachine": false, "artifactName": "SMV-Operation-Master-Setup.exe", "shortcutName": "SMV Operation Master" }
+  }
+}
