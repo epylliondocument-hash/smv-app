@@ -7,5 +7,8 @@ contextBridge.exposeInMainWorld('smvDesk', {
   getBackupFolder: () => ipcRenderer.invoke('getFolder'),
   clearBackupFolder: () => ipcRenderer.invoke('clearFolder'),
   autoBackup: (n, t) => ipcRenderer.invoke('autoBackup', n, t),
-  openDataFolder: () => ipcRenderer.invoke('openData')
+  openDataFolder: () => ipcRenderer.invoke('openData'),
+  getDataDir: () => ipcRenderer.invoke('getDataDir'),
+  pickDataDir: () => ipcRenderer.invoke('pickDataDir'),
+  useDataDir: d => ipcRenderer.invoke('useDataDir', d)
 });

@@ -11,15 +11,18 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+      - name: Prepare the icon
+        shell: bash
+        run: |
+          mkdir -p build vendor
+          if [ ! -f build/icon.png ]; then cp icon-512.png build/icon.png; fi
       - run: npm install
       - name: Use local copies of the Excel libraries (so the app works offline)
         shell: bash
         run: |
-          mkdir -p vendor
           cp node_modules/xlsx/dist/xlsx.full.min.js vendor/
           cp node_modules/exceljs/dist/exceljs.min.js vendor/
           sed -i 's#https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js#vendor/xlsx.full.min.js#; s#https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js#vendor/exceljs.min.js#' index.html
-          grep -c "vendor/" index.html
       - run: npx electron-builder --win --publish never
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: "false"

@@ -17,7 +17,10 @@ function createWindow() {
 }
 
 app.whenReady().then(() => {
-  store = createStore(path.join(app.getPath('documents'), 'SMV Operation Master'));
+  const settings = path.join(app.getPath('userData'), 'settings.json');           // remembers the data folder you chose
+  let dataDir = path.join(app.getPath('documents'), 'SMV Operation Master');
+  try { const c = JSON.parse(fs.readFileSync(settings, 'utf8')); if (c.dataDir && fs.existsSync(c.dataDir)) dataDir = c.dataDir; } catch (e) {}
+  store = createStore(dataDir, settings);
   Menu.setApplicationMenu(null);
   ipcMain.handle('load', () => store.load());
   ipcMain.handle('save', (e, text) => store.save(text));
@@ -35,6 +38,13 @@ app.whenReady().then(() => {
   ipcMain.handle('clearFolder', () => store.setFolder(null));
   ipcMain.handle('autoBackup', (e, name, text) => store.autoBackup(name, text));
   ipcMain.handle('openData', () => shell.openPath(store.root));
+  ipcMain.handle('getDataDir', () => store.root);
+  ipcMain.handle('pickDataDir', async () => {
+    const r = await dialog.showOpenDialog(win, { title: 'Choose the folder for your data', defaultPath: store.root, properties: ['openDirectory', 'createDirectory'] });
+    if (r.canceled || !r.filePaths[0]) return null;
+    return { dir: r.filePaths[0], hasData: store.hasData(r.filePaths[0]) };
+  });
+  ipcMain.handle('useDataDir', (e, dir) => store.setRoot(dir));
   createWindow();
 });
 app.on('second-instance', () => { if (win) { if (win.isMinimized()) win.restore(); win.focus(); } });
